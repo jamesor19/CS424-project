@@ -25,6 +25,9 @@ SECRET_KEY = 'i)xcknt%p7zh#o2*)x)v=6e3!tl6t7fs5kwqojdww(@4o+os86'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+LOGIN_REDIRECT_URL = 'home'
+
+
 ALLOWED_HOSTS = ['jupyter.nuigalway.ie']
 
 
@@ -56,7 +59,7 @@ ROOT_URLCONF = 'booklist.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR),'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -120,3 +123,5 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGIN_REDIRECT_URL = '/'

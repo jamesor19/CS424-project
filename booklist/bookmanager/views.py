@@ -1,29 +1,51 @@
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
 
 from bookmanager.models import Book
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.views.generic.list import ListView
+
+from bookmanager.forms import BookForm
+from django.urls import reverse
 
 #2 views one for single and other for list which doesnt work too well
 
-def book(request,title):
-    book = Book.objects.get(title=title)
+def book(request,book_title):
+    book = Book.objects.get(title=book_title)
     
-    return HttpResponse('%s by %s %s'%(Book.title,Book.author_name,member.author_surname))
+    response = render(request,'bookmanager/book_detail.html',{
+        "book":book
+    })
+    return response
     
-    #I Couldnt get this response to work with the template so I just commented it out and used the hhtpResponse
-    #response = render(request,'CS424-project/booklist/bookmanager/Templates/bookdetail.html',{})
-    #return response
-
-
-def book_list(request):
-    
-    
-    #My template didnt work right and this didn't work exactly as I wanted and it didn't list by the titles but as the object reference 
-    #books = Book.objects.values().order_by('title')
-    books= Book.objects.only('title')
    
  
 
-    return HttpResponse(books)
+def book_list(request):
+    books = Book.objects.all()
     
+    response=render(request,'bookmanager/book_list.html',{
+        'books':books
+    })
+    return response
+    
+    
+
+
+@login_required
+def book_update(request,book_title):
+    book = Book.objects.get(title=book_title)
+    if request.method=="POST":
+        form = BookForm(request.POST, instance=book) # populates the form fields with POST data
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('book_detail',kwargs={'book_title':book_title}))
+        else:
+            return HttpResponseRedirect('/')
+
+    form = BookForm(instance=book)
+    return render(request,'bookmanager/book_update.html',{
+            'form':form
+        })
+
+ 
